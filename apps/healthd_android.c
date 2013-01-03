@@ -348,6 +348,12 @@ jstring Java_com_signove_health_service_JniBridge_Cgetconfig(JNIEnv *env, jobjec
 	DEBUG("jni getconfig");
 	ContextId cid = handle_to_context(handle);
 
+	time_t utc = time(NULL);
+	struct tm *local = localtime(&utc);
+	time_t lt = utc + local->tm_gmtoff;
+	DEBUG("jni synchronizing utc:%d local:%d", utc, lt);
+	device_set_time(cid, lt);
+
 	device_getconfig(cid, &xml_out);
 
 	jstring jxml = (*env)->NewStringUTF(env, xml_out);
